@@ -1,0 +1,107 @@
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Courier New', Courier, monospace;   
+}
+.header {
+     margin: right;
+    
+}
+h1.text-center {
+    text-align: center;
+    line-height: 80px;
+}
+.container {
+    display: block;
+    margin-top: 40px;
+}
+.form-group{
+    width: 690px;
+    justify-self: center;
+    display: inline;
+}
+
+.container .Issueform {
+    width: 90%;    
+    margin-left: 35px;
+    justify-content: center;   
+    
+}
+
+#severity {
+    height: 38px;
+    margin-top: 5px;
+}
+.form-control {
+    width: 100%;
+    border: 1px solid #b19595;
+    line-height: 1.5rem;
+    font-size: 1rem;
+    padding: 0.4rem 0.6rem;
+    margin-bottom: 20px;
+}
+.btn-add-end {
+    display: flex;
+    justify-content: end;
+
+}
+.btn{
+    display: inline-block;
+    text-align: center;
+    padding: 10px 10px;
+    border-radius: 5px;
+    border: 1px solid transparent;
+}
+.btn-primary {
+    cursor: pointer;
+    background-color: #007bff;
+    border-color: #007bff;
+    color: aliceblue;
+}
+hr {
+    margin-top: 10px;
+    border: 0;
+    border-top: 1px solid rgba(0,0,0,.1);
+}
+.list-to-do {
+    margin-top: 20px;
+}
+
+.list-to-do{
+    display: flex;
+    justify-content: space-between;
+
+}
+.Row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: -15px;
+    margin-right: -15px;
+}
+.btn-open {
+    color: #fff;
+    background-color: #28a745;
+    border-color: #28a745;
+}
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: .875rem;
+    line-height: 1.5;
+    border-radius: 0.2rem;
+    cursor: pointer;
+}
+.btn-close {
+    color: #fff;
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+}
+.col-1 {
+    /* position: relative; */
+    /* width: 100%; */
+    min-height: 1px;
+    padding-right: 33px;
+    padding-left: 15px;
+   
+}
