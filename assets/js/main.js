@@ -24,6 +24,8 @@
             issueInput.value = "";
             severitySelect.selectedIndex = 0;
 
+            console.log("todoItems: ", todoItems)
+
             // Refresh the to-do list
             displayTodoList();
         }
