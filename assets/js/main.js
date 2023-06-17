@@ -1,157 +1,118 @@
-// JavaScript code for handling events and adding functionality
-        // Define an array to store the to-do items
-        var todoItems = [];
+const BACKEND_API = 'https://tony-auth-express.vercel.app/api';
 
-        // Function to add a new to-do item
-        function addTodo() {
-            var issueInput = document.getElementById("issue-input");
-            var severitySelect = document.getElementById("severity-select");
+const data = [];
 
-            var description = issueInput.value;
-            var severity = severitySelect.value;
+// services
+class HttpRequest {
+  constructor(api) {
+    this.api = api;
+  }
 
-            // Create a new to-do object
-            var todo = {
-                description: description,
-                severity: severity,
-                status: "Open"
-            };
+  async get(url) {
+    const response = await fetch(`${this.api}/${url}`); // `https://tony-auth-express.vercel.app/api/todo`
+    // const response = await fetch(`https://tony-auth-express.vercel.app/api/todo`);
+    const data = await response.json();
+    return data;
+  }
+}
 
-            // Add the new to-do object to the array
-            todoItems.push(todo);
+const httpRequest =  new HttpRequest(BACKEND_API);
 
-            // Clear the input fields
-            issueInput.value = "";
-            severitySelect.selectedIndex = 0;
+// variable
+const issuesList = document.getElementById('issuesList');
+const issueForm = document.getElementById('issueForm');
 
-            // Refresh the to-do list
-            displayTodoList();
-        }
+// add issue
+issueForm.addEventListener('submit', function(e) {
+  e.preventDefault();
+  addIssue();
+})
 
-        // Function to update the status of a to-do item
-        function updateTodoStatus(index, status) {
-            todoItems[index].status = status;
-            displayTodoList();
-        }
+function addIssue() {
+  const issueTitle = document.getElementById('issueTitle').value;
+  const issueDesc = document.getElementById('issueDescription').value;
+  const issueSeverity = document.getElementById('issueSeverity').value;
 
-        // Function to delete a to-do item
-        function deleteTodoItem(index) {
-            todoItems.splice(index, 1);
-            displayTodoList();
-        }
+  const item = {
+    id: Date.now(),
+    title: issueTitle,
+    description: issueDesc,
+    severity: issueSeverity,
+    status: "Open",
+  }
 
-        // Function to display the to-do list
-        function displayTodoList() {
-            var todoList = document.getElementById("todo-list");
-            todoList.innerHTML = "";
+  const clonedIssues = [...data]; // shallow clone
+  clonedIssues.push(item); // add new issue
+  renderIssues(clonedIssues); // render issues
+}
 
-            var searchInput = document.getElementById("search-input");
-            var filterAllButton = document.getElementById("filter-all");
-            var filterOpenButton = document.getElementById("filter-open");
-            var filterCloseButton = document.getElementById("filter-close");
-            var orderBySelect = document.getElementById("order-by-select");
+// fetch issue
+async function fetchIssues() {
+  const data = await httpRequest.get('todo');
+  renderIssues(data.data);
+  console.log("data: ", data.data)
+}
 
-            var searchText = searchInput.value.toLowerCase();
-            var filterStatus = "all";
+// pure function: input -> output (no effect outside)
+function renderIssues(dataIssues) {
+  if(dataIssues.length === 0) {
+    issuesList.innerHTML = '';
+    return;
+  }
+    
+  for (const issue of dataIssues) {
+    issuesList.innerHTML += `
+      <li class="issue-list-item">
+        <div class="list-item-header">
+            <div for="" class="list-item-title">${issue.title}</div>
+            <div id="issueStatus" class="list-item-status">
+              ${issue.status}
+            </div>
+        </div>
+        <div class="list-item-content">
+            <h3 class="issue-name">${issue.description}</h3>
+            <div class="list-item-severity">${issue.severity}</div>
+            <div class="list-item-group-tabc">
+              <div class="list-item-group-author">
+              </div>
+              <div class="list-item-group-btn">
+                <button 
+                    id="changeSttBtn" 
+                    class="btn btn--close" 
+                >
+                  close
+                </button>
+                <button 
+                  class="btn btn--delete" 
+                  onclick="deleteIssue('${issue.id}')"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+        </div>
+      </li>
+      <br>
+    `
+  }
+}
 
-            if (filterOpenButton.classList.contains("active")) {
-                filterStatus = "open";
-            } else if (filterCloseButton.classList.contains("active")) {
-                filterStatus = "close";
-            }
+// delete issue 
+function deleteIssue(issueId) {
+  const clonedIssues = [...data]; // shallow clone
+  const issueIndex = clonedIssues.findIndex(issue => issue.id === issueId); // find index
+  clonedIssues.splice(issueIndex, 1); // remove issue
+  renderIssues(clonedIssues);
+}
 
-            var orderBy = orderBySelect.value;
+// search issues
+function searchIssues() {}
 
-            var filteredItems = todoItems.filter(function (item) {
-                var description = item.description.toLowerCase();
-                var status = item.status.toLowerCase();
+// filter issues
+function filterIssues() {}
 
-                return (
-                    (description.indexOf(searchText) !== -1 || searchText === "") &&
-                    (filterStatus === "all" || status === filterStatus)
-                );
-            });
+// sort issues
+function sortIssues() {}
 
-            if (orderBy === "asc") {
-                filteredItems.sort(function (a, b) {
-                    return a.description.localeCompare(b.description);
-                });
-            } else if (orderBy === "desc") {
-                filteredItems.sort(function (a, b) {
-                    return b.description.localeCompare(a.description);
-                });
-            }
-
-            filteredItems.forEach(function (item, index) {
-                var listItem = document.createElement("li");
-                var descriptionSpan = document.createElement("span");
-                var severitySpan = document.createElement("span");
-                var statusSpan = document.createElement("span");
-                var updateButton = document.createElement("button");
-                var deleteButton = document.createElement("button");
-
-                descriptionSpan.innerText = item.description;
-                severitySpan.innerText = "Severity: " + item.severity;
-                statusSpan.innerText = "Status: " + item.status;
-
-                updateButton.innerText = "Update";
-                updateButton.addEventListener("click", function () {
-                    var newStatus = item.status === "Open" ? "Close" : "Open";
-                    updateTodoStatus(index, newStatus);
-                });
-
-                deleteButton.innerText = "Delete";
-                deleteButton.addEventListener("click", function () {
-                    deleteTodoItem(index);
-                });
-
-                listItem.appendChild(descriptionSpan);
-                listItem.appendChild(document.createElement("br"));
-                listItem.appendChild(severitySpan);
-                listItem.appendChild(document.createElement("br"));
-                listItem.appendChild(statusSpan);
-                listItem.appendChild(document.createElement("br"));
-                listItem.appendChild(updateButton);
-                listItem.appendChild(deleteButton);
-
-                todoList.appendChild(listItem);
-            });
-        }
-
-        // Add event listener to the "Add" button
-        var addButton = document.getElementById("add-button");
-        addButton.addEventListener("click", addTodo);
-
-        // Add event listener to the search input field
-        var searchInput = document.getElementById("search-input");
-        searchInput.addEventListener("input", displayTodoList);
-
-        // Add event listeners to the filter buttons
-        var filterAllButton = document.getElementById("filter-all");
-        var filterOpenButton = document.getElementById("filter-open");
-        var filterCloseButton = document.getElementById("filter-close");
-
-        filterAllButton.addEventListener("click", function () {
-            filterAllButton.classList.add("active");
-            filterOpenButton.classList.remove("active");
-            filterCloseButton.classList.remove("active");
-            displayTodoList();
-        });
-
-        filterOpenButton.addEventListener("click", function () {
-            filterAllButton.classList.remove("active");
-            filterOpenButton.classList.add("active");
-            filterCloseButton.classList.remove("active");
-            displayTodoList();
-        });
-
-        filterCloseButton.addEventListener("click", function () {
-            filterAllButton.classList.remove("active");
-            filterOpenButton.classList.remove("active");
-            filterCloseButton.classList.add("active");
-            displayTodoList();
-        });
-
-        // Add event listener to the "Order by" select field
-        var orderBySelect = document.getElementById("order-by-select");
-        orderBySelect.addEventListener("change", displayTodoList);
+// initial render
+fetchIssues()
