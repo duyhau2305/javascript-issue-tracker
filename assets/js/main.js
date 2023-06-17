@@ -1,6 +1,6 @@
 const BACKEND_API = 'https://tony-auth-express.vercel.app/api';
 
-const data = [];
+const dataIssues = [];
 
 // services
 class HttpRequest {
@@ -34,31 +34,27 @@ function addIssue() {
   const issueSeverity = document.getElementById('issueSeverity').value;
 
   const item = {
-    id: Date.now(),
+    _id: Date.now().toString(),
     title: issueTitle,
     description: issueDesc,
     severity: issueSeverity,
     status: "Open",
   }
-
-  const clonedIssues = [...data]; // shallow clone
-  clonedIssues.push(item); // add new issue
-  renderIssues(clonedIssues); // render issues
+  
+  dataIssues.push(item); // add new issue
+  renderIssues(dataIssues); // render issues
 }
 
 // fetch issue
 async function fetchIssues() {
   const data = await httpRequest.get('todo');
+  dataIssues.push(...data.data);
   renderIssues(data.data);
-  console.log("data: ", data.data)
 }
 
 // pure function: input -> output (no effect outside)
 function renderIssues(dataIssues) {
-  if(dataIssues.length === 0) {
-    issuesList.innerHTML = '';
-    return;
-  }
+  issuesList.innerHTML = '';
     
   for (const issue of dataIssues) {
     issuesList.innerHTML += `
@@ -84,7 +80,7 @@ function renderIssues(dataIssues) {
                 </button>
                 <button 
                   class="btn btn--delete" 
-                  onclick="deleteIssue('${issue.id}')"
+                  onclick="deleteIssue('${issue._id}')"
                 >
                   Delete
                 </button>
@@ -99,8 +95,8 @@ function renderIssues(dataIssues) {
 
 // delete issue 
 function deleteIssue(issueId) {
-  const clonedIssues = [...data]; // shallow clone
-  const issueIndex = clonedIssues.findIndex(issue => issue.id === issueId); // find index
+  const clonedIssues = [...dataIssues]; // shallow clone
+  const issueIndex = clonedIssues.findIndex(issue => issue._id === issueId); // find index
   clonedIssues.splice(issueIndex, 1); // remove issue
   renderIssues(clonedIssues);
 }
