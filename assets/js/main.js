@@ -95,10 +95,9 @@ function renderIssues(dataIssues) {
 
 // delete issue 
 function deleteIssue(issueId) {
-  const clonedIssues = [...dataIssues]; // shallow clone
-  const issueIndex = clonedIssues.findIndex(issue => issue._id === issueId); // find index
-  clonedIssues.splice(issueIndex, 1); // remove issue
-  renderIssues(clonedIssues);
+  const issueIndex = dataIssues.findIndex(issue => issue._id === issueId); // find index
+  dataIssues.splice(issueIndex, 1); // remove issue
+  renderIssues(dataIssues);
 }
 
 // search issues
