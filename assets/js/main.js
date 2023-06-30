@@ -127,6 +127,7 @@ function filterIssues() {
 
 // sort issues
 const sortItem = document.getElementById('sort-value');
+// add issue
 sortItem.addEventListener('input', function(e) {
   e.preventDefault();
   sortIssues();
